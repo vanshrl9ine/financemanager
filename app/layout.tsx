@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-
+import { Toaster } from "../components/ui/sonner";
 const inter = Inter({ subsets: ["latin"] });
 
 import {
   ClerkProvider,
 } from '@clerk/nextjs'
 import { QueryProvider } from "../providers/query-provider";
+import { SheetProvider } from "../providers/sheet-provider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -24,7 +25,11 @@ export default function RootLayout({
        <html lang="en">
          <body className={inter.className}>
           <QueryProvider>
-          {children}
+            <SheetProvider/>
+            <Toaster/>
+               {children}
+            
+          
           </QueryProvider>
           
           </body>
