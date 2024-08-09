@@ -1,6 +1,6 @@
 {
-  "id": "c4b8503a-d850-4e28-a824-4e91b3b20933",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "c190aedf-efed-40b4-9d5b-3ab87e55ec91",
+  "prevId": "c4b8503a-d850-4e28-a824-4e91b3b20933",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -19,6 +19,12 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "plaid_id": {
+          "name": "plaid_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "user_id": {
           "name": "user_id",

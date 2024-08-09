@@ -1,12 +1,19 @@
 {
-  "version": "5",
-  "dialect": "pg",
+  "version": "7",
+  "dialect": "postgresql",
   "entries": [
     {
       "idx": 0,
-      "version": "5",
-      "when": 1723197430111,
-      "tag": "0000_old_killmonger",
+      "version": "7",
+      "when": 1723201861686,
+      "tag": "0000_free_warhawk",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1723207979372,
+      "tag": "0001_fancy_chameleon",
       "breakpoints": true
     }
   ]
