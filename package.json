@@ -5,7 +5,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:generate": "drizzle-kit generate:pg --schema db/schema.ts --out ./drizzle",
+    "db:migrate": "tsx ./scripts/migrate.ts",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@clerk/backend": "^1.6.2",
@@ -37,7 +40,10 @@
   "devDependencies": {
     "@types/node": "22.1.0",
     "@types/react": "18.3.3",
+    "dotenv": "^16.4.5",
     "drizzle-kit": "^0.20.17",
+    "pg": "^8.11.5",
+    "tsx": "^4.17.0",
     "typescript": "5.5.4"
   }
 }
