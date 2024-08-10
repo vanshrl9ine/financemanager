@@ -15,6 +15,13 @@
       "when": 1723207979372,
       "tag": "0001_fancy_chameleon",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1723300619303,
+      "tag": "0002_natural_cargill",
+      "breakpoints": true
     }
   ]
 }
