@@ -6,7 +6,10 @@ import {HTTPException} from 'hono/http-exception';
 import { eq } from "drizzle-orm";
 import { zValidator } from "@hono/zod-validator";
 import { createId } from "@paralleldrive/cuid2";
-import { create } from "domain";const app=new Hono()
+import { create } from "domain";
+import {z} from 'zod';
+import { and,inArray } from "drizzle-orm";
+const app=new Hono()
 .get('/',clerkMiddleware(),async(c)=>{
     const auth=getAuth(c);
     if(!auth?.userId){
@@ -36,5 +39,16 @@ import { create } from "domain";const app=new Hono()
     }).returning();
     //data is not your object which can be returned so you have to chai it with returning
     return c.json({data:data[0]});
+})
+.post("/bulk-delete",clerkMiddleware(),zValidator("json",z.object({
+    ids:z.array(z.string()),
+})),async(c)=>{
+    const auth=getAuth(c);
+    const values=c.req.valid("json");
+    if(!auth?.userId){
+        return c.json({error:"unauthorized"},401);
+    };
+    const data=await db.delete(accounts).where(and(eq(accounts.userId,auth.userId),inArray(accounts.id,values.ids))).returning({id:accounts.id});
+    return c.json({data});
 })
 export default app;
