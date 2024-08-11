@@ -11,9 +11,33 @@ import { Skeleton } from '../../../components/ui/skeleton';
 import { useBulkDeleteTranasactions } from '../../../features/transactions/api/use-bulk-delete-transactions';
 import { Input } from '../../../components/ui/input';
 import { DatePicker } from '../../../components/date-picker';
+import { UploadButton } from './upload-button';
+import { ImportCard } from './import-card';
 
+enum VARIANTS {
+  LIST = "LIST",
+  IMPORT = "IMPORT",
+};
 
+const INITIAL_IMPORT_RESULTS = {
+  data: [],
+  errors: [],
+  meta: {},
+};
 const TransactionsPage = () => {
+   const [variant, setVariant] = useState<VARIANTS>(VARIANTS.LIST);
+   const [importResults, setImportResults] = useState(INITIAL_IMPORT_RESULTS);
+   const onUpload = (results: typeof INITIAL_IMPORT_RESULTS) => {
+    console.log("Upload function called");
+    console.log({ results });
+    setImportResults(results);
+    setVariant(VARIANTS.IMPORT);
+  };
+   const onCancelImport = () => {
+    setImportResults(INITIAL_IMPORT_RESULTS);
+    setVariant(VARIANTS.LIST);
+  };
+
   const newTransaction = useNewTransaction();
   const transactionsQuery=useGetTransactions();
   const transactions=transactionsQuery.data || [];
@@ -70,6 +94,15 @@ const TransactionsPage = () => {
       </div>
     )
   }
+  if(variant===VARIANTS.IMPORT){
+    return(
+      <>
+      <div>
+        <ImportCard data={importResults.data} onCancel={onCancelImport} onSubmit={()=>{}}/>
+      </div>
+      </>
+    );
+  }
   return (
     <div className="max-w-screen-2xl mx-auto -mt-24 pb-10 w-full">
       
@@ -79,7 +112,7 @@ const TransactionsPage = () => {
 
           <CardTitle className="text-xl line-clamp-1">Transaction History</CardTitle>
           
-          <div className="flex items-center space-x-4">
+          <div className="flex flex-col lg:flex-row gap-y-2 items-center gap-x-2">
             <DatePicker
               value={fromDate}
               onChange={handleFromDateChange}
@@ -90,10 +123,11 @@ const TransactionsPage = () => {
               onChange={handleToDateChange}
               disabled={isDisabled}
             />
-            <Button size="sm" onClick={newTransaction.onOpen}>
+            <Button size="sm" className='w-full lg:auto' onClick={newTransaction.onOpen}>
               <Plus className="size-4 mr-2" />
               Add new
             </Button>
+            <UploadButton onUpload={onUpload}/>
           </div>
         </CardHeader>
         
