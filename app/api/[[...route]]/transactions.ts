@@ -25,8 +25,8 @@ const app=new Hono()
         return c.json({error:"unauthorized"},401);
     };
 
-    const defaultTo=new Date();
-    const defaultFrom=subDays(defaultTo,30);
+    const defaultTo=new Date("2037-12-31");
+    const defaultFrom=new Date(0);
     const startDate=from?parse(from,"yyyy-MM-dd",new Date()):defaultFrom;
     const endDate=to?parse(to,"yyyy-MM-dd",new Date()):defaultTo;
 

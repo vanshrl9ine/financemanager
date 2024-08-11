@@ -1,9 +1,11 @@
-import React from 'react'
+
+import React, { useEffect, useState } from 'react'
 import Header from '../../components/header'
 type Props={
     children:React.ReactNode;
 }
 const Dashboardlayout = ({children}:Props) => {
+ 
   return (
     <>
     <Header/>
