@@ -21,18 +21,36 @@ const TransactionsPage = () => {
   const isDisabled = transactionsQuery.isLoading || deleteTransactions.isPending;
 
   
-  // State for date filters
-  const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
-  const [toDate, setToDate] = useState<Date | undefined>(undefined);
-
-  // Filter transactions based on dates
-  const filteredTransactions = transactions.filter(transaction => {
-    const transactionDate = new Date(transaction.date);
-    const from = fromDate ? fromDate : null;
-    const to = toDate ? toDate : null;
-
-    return (!from || transactionDate >= from) && (!to || transactionDate <= to);
-  });
+   // State for date filters
+   const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
+   const [toDate, setToDate] = useState<Date | undefined>(undefined);
+ 
+   // Handle fromDate change
+   const handleFromDateChange = (date: Date | undefined) => {
+     if (date && toDate && date > toDate) {
+       // If selected fromDate is greater than toDate, reset toDate
+       setToDate(undefined);
+     }
+     setFromDate(date);
+   };
+ 
+   // Handle toDate change
+   const handleToDateChange = (date: Date | undefined) => {
+     if (date && fromDate && date < fromDate) {
+       // If selected toDate is less than fromDate, reset fromDate
+       setFromDate(undefined);
+     }
+     setToDate(date);
+   };
+ 
+   // Filter transactions based on dates
+   const filteredTransactions = transactions.filter(transaction => {
+     const transactionDate = new Date(transaction.date);
+     const from = fromDate ? fromDate : null;
+     const to = toDate ? toDate : null;
+ 
+     return (!from || transactionDate >= from) && (!to || transactionDate <= to);
+   });
 
 
   if(transactionsQuery.isLoading){
@@ -64,12 +82,12 @@ const TransactionsPage = () => {
           <div className="flex items-center space-x-4">
             <DatePicker
               value={fromDate}
-              onChange={setFromDate}
+              onChange={handleFromDateChange}
               disabled={isDisabled}
             />
             <DatePicker
               value={toDate}
-              onChange={setToDate}
+              onChange={handleToDateChange}
               disabled={isDisabled}
             />
             <Button size="sm" onClick={newTransaction.onOpen}>
