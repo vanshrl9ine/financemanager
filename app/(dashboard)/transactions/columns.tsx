@@ -56,7 +56,7 @@ export const columns: ColumnDef<ResponseType>[] = [
       const date=row.getValue("date") as Date;
       return (
         <span>
-            {format(date,"dd MMMM,yyy")}
+            {format(date,"yyyy-MM-dd")}
         </span>
       )
     }

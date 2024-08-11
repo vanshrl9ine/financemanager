@@ -13,7 +13,10 @@ import { Input } from '../../../components/ui/input';
 import { DatePicker } from '../../../components/date-picker';
 import { UploadButton } from './upload-button';
 import { ImportCard } from './import-card';
-
+import { toast } from 'sonner';
+import { transactions as transactionsSchema } from '../../../db/schema';
+import { useSelectAccount } from '../../../features/accounts/hooks/use-select-account';
+import { useBulkCreateTranasactions } from '../../../features/transactions/api/use-bulk-create-transactions';
 enum VARIANTS {
   LIST = "LIST",
   IMPORT = "IMPORT",
@@ -25,6 +28,7 @@ const INITIAL_IMPORT_RESULTS = {
   meta: {},
 };
 const TransactionsPage = () => {
+  const [AccountDialog, confirm] = useSelectAccount();
    const [variant, setVariant] = useState<VARIANTS>(VARIANTS.LIST);
    const [importResults, setImportResults] = useState(INITIAL_IMPORT_RESULTS);
    const onUpload = (results: typeof INITIAL_IMPORT_RESULTS) => {
@@ -39,12 +43,33 @@ const TransactionsPage = () => {
   };
 
   const newTransaction = useNewTransaction();
+  const createTransactions = useBulkCreateTranasactions();
   const transactionsQuery=useGetTransactions();
   const transactions=transactionsQuery.data || [];
   const deleteTransactions=useBulkDeleteTranasactions() || []
   const isDisabled = transactionsQuery.isLoading || deleteTransactions.isPending;
 
-  
+  const onSubmitImport = async (
+    values: (typeof transactionsSchema.$inferInsert)[],
+  ) => {
+    const accountId = await confirm();
+
+    if (!accountId) {
+      return toast.error("Please select an account to continue.");
+    }
+
+    const data = values.map((value) => ({
+      ...value,
+      accountId: accountId as string,
+    }));
+
+    createTransactions.mutate(data, {
+      onSuccess: () => {
+        onCancelImport();
+      },
+    });
+  };
+
    // State for date filters
    const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
    const [toDate, setToDate] = useState<Date | undefined>(undefined);
@@ -98,7 +123,8 @@ const TransactionsPage = () => {
     return(
       <>
       <div>
-        <ImportCard data={importResults.data} onCancel={onCancelImport} onSubmit={()=>{}}/>
+        <AccountDialog/>
+        <ImportCard data={importResults.data} onCancel={onCancelImport} onSubmit={onSubmitImport}/>
       </div>
       </>
     );
