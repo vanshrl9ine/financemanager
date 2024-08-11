@@ -10,6 +10,7 @@ import { useGetTransactions } from '../../../features/transactions/api/use-get-t
 import { Skeleton } from '../../../components/ui/skeleton';
 import { useBulkDeleteTranasactions } from '../../../features/transactions/api/use-bulk-delete-transactions';
 import { Input } from '../../../components/ui/input';
+import { DatePicker } from '../../../components/date-picker';
 
 
 const TransactionsPage = () => {
@@ -19,17 +20,20 @@ const TransactionsPage = () => {
   const deleteTransactions=useBulkDeleteTranasactions() || []
   const isDisabled = transactionsQuery.isLoading || deleteTransactions.isPending;
 
-  const [fromDate, setFromDate] = useState('');
-  const [toDate, setToDate] = useState('');
+  
+  // State for date filters
+  const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
+  const [toDate, setToDate] = useState<Date | undefined>(undefined);
 
   // Filter transactions based on dates
   const filteredTransactions = transactions.filter(transaction => {
     const transactionDate = new Date(transaction.date);
-    const from = fromDate ? new Date(fromDate) : null;
-    const to = toDate ? new Date(toDate) : null;
+    const from = fromDate ? fromDate : null;
+    const to = toDate ? toDate : null;
 
     return (!from || transactionDate >= from) && (!to || transactionDate <= to);
   });
+
 
   if(transactionsQuery.isLoading){
     return(
@@ -58,17 +62,15 @@ const TransactionsPage = () => {
           <CardTitle className="text-xl line-clamp-1">Transaction History</CardTitle>
           
           <div className="flex items-center space-x-4">
-            <Input
-              type="date"
+            <DatePicker
               value={fromDate}
-              onChange={(e) => setFromDate(e.target.value)}
-              placeholder="From date"
+              onChange={setFromDate}
+              disabled={isDisabled}
             />
-            <Input
-              type="date"
+            <DatePicker
               value={toDate}
-              onChange={(e) => setToDate(e.target.value)}
-              placeholder="To date"
+              onChange={setToDate}
+              disabled={isDisabled}
             />
             <Button size="sm" onClick={newTransaction.onOpen}>
               <Plus className="size-4 mr-2" />
