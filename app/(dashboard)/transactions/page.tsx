@@ -2,7 +2,7 @@
 import React from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card";
 import { Button } from "../../../components/ui/button";
-import { useNewAccount } from '../../../features/accounts/hooks/use-new-account';
+import { useNewTransaction } from '../../../features/transactions/hooks/use-new-transaction';
 import { Loader2, Plus } from 'lucide-react';
 import { columns } from './columns';
 import { DataTable } from '../../../components/data-table';
@@ -12,7 +12,7 @@ import { useBulkDeleteAccounts } from '../../../features/accounts/api/use-bulk-d
 
 
 const TransactionsPage = () => {
-  const newAccount = useNewAccount();
+  const newAccount = useNewTransaction();
   const accountsQuery=useGetAccounts();
   const accounts=accountsQuery.data || [];
   const deleteAccounts=useBulkDeleteAccounts() || []
@@ -39,7 +39,7 @@ const TransactionsPage = () => {
     <div className="max-w-screen-2xl mx-auto -mt-24 pb-10 w-full">
       <Card className="border-none drop-shadow-sm">
         <CardHeader className="gap-y-2 lg:flex-row lg:items-center lg:justify-between">
-          <CardTitle className="text-xl line-clamp-1">Accounts Page</CardTitle>
+          <CardTitle className="text-xl line-clamp-1">Transaction History</CardTitle>
           <Button size="sm" onClick={newAccount.onOpen}>
             <Plus className="size-4 mr-2" />
             Add new

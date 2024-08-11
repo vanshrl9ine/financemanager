@@ -24,46 +24,66 @@ const app=new Hono()
     
     return c.json({data});
 })
-.get('/:id',clerkMiddleware(),zValidator("param",z.object({
-   id:z.string().optional()
-})),async(c)=>{
-    const auth=getAuth(c);
-    const {id}=c.req.valid("param");
+.get(
+    "/:id",
+    zValidator("param", z.object({ id: z.string().optional() })),
+    clerkMiddleware(),
+    async (c) => {
+      const auth = getAuth(c);
+      const { id } = c.req.valid("param");
 
-    if(!id){
-        return c.json({error:"Missing id"},400);
-    };
-    if(!auth?.userId){
-        return c.json({error:"unauthorized"},401);
-    };
-    const [data]=await db.select({
-        id:accounts.id,
-        name:accounts.name
-    })
-    .from(accounts)
-    .where(
-        and(eq(accounts.userId,auth.userId),eq(accounts.id,id))
-    );
-    if(!data)return c.json({error:"Not found"},401);
-    return c.json({data});
-        
-})
-.post("/",clerkMiddleware(),zValidator("json",insertAccountSchema.pick({name:true,})),async(c)=>{
-    const auth=getAuth(c);
-    const values=c.req.valid("json");
-    if(!auth?.userId){
-        return c.json({error:"unauthorized"},401);
-    };
+      if (!id) {
+        return c.json({ error: "id is required" }, 400);
+      }
 
-    const data=await db.insert(accounts).values({
-        id:createId(),
-        userId:auth.userId,
-        ...values,
+      if (!auth?.userId) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
 
-    }).returning();
-    //data is not your object which can be returned so you have to chai it with returning
-    return c.json({data:data[0]});
-})
+      const [data] = await db
+        .select({
+          id: accounts.id,
+          name: accounts.name,
+        })
+        .from(accounts)
+        .where(and(eq(accounts.userId, auth.userId), eq(accounts.id, id)));
+
+      if (!data) {
+        return c.json({ error: "Account not found" }, 404);
+      }
+
+      return c.json({ data });
+    },
+  )
+  .post(
+    "/",
+    clerkMiddleware(), // getAuth() method can be undefined if do not set clerk middleware
+    zValidator(
+      "json",
+      insertAccountSchema.pick({
+        name: true,
+      }),
+    ),
+    async (c) => {
+      const auth = getAuth(c);
+      const values = c.req.valid("json");
+
+      if (!auth?.userId) {
+        return c.json({ error: "Unauthorized" }, 401);
+      }
+
+      const [data] = await db
+        .insert(accounts)
+        .values({
+          id: createId(),
+          userId: auth.userId,
+          ...values,
+        })
+        .returning();
+
+      return c.json({ data });
+    },
+  )
 .post("/bulk-delete",clerkMiddleware(),zValidator("json",z.object({
     ids:z.array(z.string()),
 })),async(c)=>{
