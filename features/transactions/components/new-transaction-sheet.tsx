@@ -10,6 +10,7 @@ import { useGetCategories } from "../../categories/api/use-get-categories";
 import { useGetAccounts } from "../../accounts/api/use-get-accounts";
 import { useCreateAccount } from "../../accounts/api/use-create-account";
 import { Loader2 } from "lucide-react";
+import { TransactionForm } from "./transaction-form";
 const formSchema = insertTransactionSchema.omit({
    id:true,
   });
@@ -67,7 +68,14 @@ const formSchema = insertTransactionSchema.omit({
             <Loader2 className="size-4 text-muted-foreground animate-spin" />
           </div>
         ) : (
-          <p>transaction form</p>
+          <TransactionForm
+            onSubmit={onSubmit}
+            disabled={isPending}
+            categoryOptions={categoryOptions}
+            onCreateCategory={onCreateCategory}
+            accountOptions={accountOptions}
+            onCreateAccount={onCreateAccount}
+          />
         )}
         </SheetContent>
       </Sheet>
