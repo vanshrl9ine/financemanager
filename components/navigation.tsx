@@ -1,13 +1,14 @@
 'use client';
 import React from 'react'
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+
 import { useRouter } from 'next/navigation';
 import NavButton from './nav-button';
 import { Sheet,SheetContent,SheetTrigger } from './ui/sheet';
 import { useMedia } from 'react-use';
 import { Button } from './ui/button';
 import { Menu } from 'lucide-react';
+import { useState,useEffect } from "react";
 const routes=[
     {
         href:'/',
@@ -31,6 +32,11 @@ const routes=[
     },
 ]
 const Navigation = () => {
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+      setIsMounted(true);
+    }, []);
     const [isOpen,setIsOpen]=useState(false);
     const router=useRouter();
     const pathname=usePathname();
@@ -39,9 +45,10 @@ const Navigation = () => {
         router.push(href);
         setIsOpen(false);
     };
-    if(isMobile){
+    if(isMobile && isMounted){
         return(
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
+                
                 <SheetTrigger>
                     <Button variant="outline" size="sm" className='font-normal bg-white/10 hover:bg-white/20 hover:text-white border-none focus-visible:ring-offset-0 focus-visble:ring-transparent outline-none text-white focus:bg-white/30 transition'>
                      <Menu className='size-4'/>
